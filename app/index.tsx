@@ -63,6 +63,18 @@ const SoundCard = ({ title, image }: { title: string; image: any }) => {
 
 export default function App() {
 	const [category, setCategory] = useState("all")
+
+	const displayGreeting = () => {
+		const myDate = new Date()
+		const hrs = myDate.getHours()
+		let greet
+
+		if (hrs < 12) greet = "Good Morning"
+		else if (hrs >= 12 && hrs <= 17) greet = "Good Afternoon"
+		else if (hrs >= 17 && hrs <= 24) greet = "Good Evening"
+		return greet
+	}
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar barStyle="light-content" />
@@ -71,7 +83,7 @@ export default function App() {
 					<View style={styles.headerTop}>
 						<Text style={styles.greeting}>Hey, Mike</Text>
 					</View>
-					<Text style={styles.subGreeting}>Good Day</Text>
+					<Text style={styles.subGreeting}>{displayGreeting()}</Text>
 				</View>
 
 				<View style={styles.section}>
