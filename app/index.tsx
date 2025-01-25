@@ -1,240 +1,87 @@
-import React, { Dispatch, SetStateAction, useState } from "react"
-import {
-	StyleSheet,
-	View,
-	Text,
-	Image,
-	ScrollView,
-	TouchableOpacity,
-	SafeAreaView,
-	StatusBar,
-} from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import { Link } from "expo-router"
-import LottieView from "lottie-react-native"
+import { router } from "expo-router"
+import React, { useEffect, useState } from "react"
+import { TextInput, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native"
+import { useLiveQuery } from "drizzle-orm/expo-sqlite"
+import { db } from "@/database"
+import * as schema from "@/database/schema"
 
-const catalog = [
-	{ title: "Blue", category: "ambient", path: require("../assets/lottie/blue.json") },
-	{ title: "Brown", category: "ambient", path: require("../assets/lottie/brown.json") },
-	{ title: "Pink", category: "ambient", path: require("../assets/lottie/pink.json") },
-	{ title: "White", category: "ambient", path: require("../assets/lottie/white.json") },
-	{ title: "Waves", category: "beach", path: require("../assets/lottie/waves.json") },
-	{ title: "Crickets", category: "sunset", path: require("../assets/lottie/crickets.json") },
-	{ title: "Bonfire", category: "sunset", path: require("../assets/lottie/fire.json") },
-	{ title: "Rain", category: "forest", path: require("../assets/lottie/rain.json") },
-	{ title: "Birds", category: "forest", path: require("../assets/lottie/birds.json") },
-]
+const App = () => {
+	const [nameValue, setNameValue] = useState("")
+	const { data } = useLiveQuery(db.select().from(schema.user)) as { data: schema.user[] }
+	console.log(data)
 
-const CategoryCard = ({
-	icon,
-	title,
-	backgroundColor,
-	setCategory,
-}: {
-	icon: string
-	title: string
-	backgroundColor: string
-	setCategory: Dispatch<SetStateAction<string>>
-}) => (
-	<TouchableOpacity
-		style={[styles.categoryCard, { backgroundColor }]}
-		onPress={() => setCategory(title)}
-	>
-		<Text style={styles.categoryIcon}>{icon}</Text>
-		<Text style={styles.categoryTitle}>{title}</Text>
-	</TouchableOpacity>
-)
-
-const SoundCard = ({ title, image }: { title: string; image: any }) => {
-	return (
-		<Link href={`/play?sound=${title}`} asChild>
-			<TouchableOpacity style={styles.soundCard}>
-				<View style={[styles.soundImage, { backgroundColor: "black" }]}>
-					<LottieView source={image} style={{ height: 150, width: 150 }} autoPlay />
-				</View>
-				<Text style={styles.soundTitle}>{title}</Text>
-				<View style={styles.playIcon}>
-					<Ionicons name="play" size={15} color="white" />
-				</View>
-			</TouchableOpacity>
-		</Link>
-	)
-}
-
-export default function App() {
-	const [category, setCategory] = useState("all")
-
-	const displayGreeting = () => {
-		const myDate = new Date()
-		const hrs = myDate.getHours()
-		let greet
-
-		if (hrs < 12) greet = "Good Morning"
-		else if (hrs >= 12 && hrs <= 17) greet = "Good Afternoon"
-		else if (hrs >= 17 && hrs <= 24) greet = "Good Evening"
-		return greet
+	const handleNext = () => {
+		if (nameValue.length === 0) {
+			Alert.alert("Please enter your name to get started")
+			return
+		}
+		db.insert(schema.user).values({ name: nameValue }).run()
+		router.replace("/home")
 	}
 
+	useEffect(() => {
+		if (data.length > 0) {
+			return router.replace("/home")
+		}
+	})
+
 	return (
-		<SafeAreaView style={styles.container}>
-			<StatusBar barStyle="light-content" />
-			<ScrollView style={styles.scrollView}>
-				<View style={styles.header}>
-					<View style={styles.headerTop}>
-						<Text style={styles.greeting}>Hey, Mike</Text>
-					</View>
-					<Text style={styles.subGreeting}>{displayGreeting()}</Text>
-				</View>
-
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Recently Played</Text>
-					<View style={styles.recentlyPlayed}>
-						<SoundCard title="Bonfire" image={require("../assets/lottie/fire.json")} />
-					</View>
-				</View>
-
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Categories</Text>
-					<ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingLeft: 15 }}>
-						<CategoryCard icon="🔈" title="All" backgroundColor="#fff" setCategory={setCategory} />
-						<CategoryCard
-							icon="🧘"
-							title="Ambient"
-							backgroundColor="#eef3e9"
-							setCategory={setCategory}
-						/>
-						<CategoryCard
-							icon="🌳"
-							title="Forest"
-							backgroundColor="#a8f3e9"
-							setCategory={setCategory}
-						/>
-						<CategoryCard
-							icon="🐚"
-							title="Beach"
-							backgroundColor="#ffe8e8"
-							setCategory={setCategory}
-						/>
-						<CategoryCard
-							icon="🌅"
-							title="Sunset"
-							backgroundColor="#eeff99"
-							setCategory={setCategory}
-						/>
-					</ScrollView>
-				</View>
-
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Catalog</Text>
-					<ScrollView
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						style={{ paddingTop: 2, paddingLeft: 15 }}
-					>
-						{catalog.reduce((data: React.ReactNode[], item) => {
-							if (category.toLowerCase() === "all" || item.category === category.toLowerCase()) {
-								data.push(<SoundCard key={item.title} title={item.title} image={item.path} />)
-							}
-							return data
-						}, [])}
-					</ScrollView>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+		<View style={styles.container}>
+			<Text style={styles.text}>Welcome to </Text>
+			<Text style={styles.title}>SoundNest</Text>
+			<Text style={styles.text}>Get Started by Entering Your Name</Text>
+			<TextInput
+				placeholder="Name"
+				style={styles.input}
+				value={nameValue}
+				onChangeText={setNameValue}
+				placeholderTextColor={"#fff"}
+			/>
+			<TouchableOpacity style={styles.button} onPress={() => handleNext()}>
+				<Text style={styles.buttonText}>Next</Text>
+			</TouchableOpacity>
+		</View>
 	)
 }
 
+export default App
+
 const styles = StyleSheet.create({
+	button: {
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		backgroundColor: "#fff",
+		width: "80%",
+		borderRadius: 15,
+	},
+	buttonText: {
+		textAlign: "center",
+	},
 	container: {
 		flex: 1,
 		backgroundColor: "#29214e",
-	},
-	scrollView: {
-		flex: 1,
-	},
-	header: {
-		padding: 20,
-	},
-	headerTop: {
-		flexDirection: "row",
 		alignItems: "center",
+		justifyContent: "center",
+		padding: 50,
 	},
-	greeting: {
-		fontSize: 24,
-		fontWeight: "bold",
-		color: "white",
-	},
-	subGreeting: {
-		fontSize: 16,
-		color: "#999",
-		marginTop: 5,
-	},
-	section: {
-		marginVertical: 15,
-	},
-	sectionTitle: {
-		fontSize: 18,
-		fontWeight: "bold",
-		color: "white",
-		marginLeft: 20,
-		marginBottom: 15,
-	},
-	recentlyPlayed: {
-		flexDirection: "row",
-		paddingLeft: 15,
-	},
-	soundCard: {
-		width: 130,
-		marginLeft: 10,
-	},
-	soundImage: {
-		width: "100%",
-		height: 150,
-		borderRadius: 25,
-		overflow: "hidden",
-	},
-	soundTitle: {
-		color: "white",
-		marginTop: 8,
-		fontSize: 16,
-		textAlign: "center",
-	},
-	categoryCard: {
-		flexDirection: "row",
-		alignItems: "center",
+	input: {
+		height: 40,
+		marginBottom: 20,
+		borderWidth: 1,
 		padding: 10,
+		borderColor: "#fff",
+		color: "#fff",
 		borderRadius: 15,
-		marginLeft: 10,
-		minWidth: 120,
 	},
-	categoryIcon: {
-		fontSize: 20,
-		marginRight: 8,
-	},
-	categoryTitle: {
-		fontSize: 16,
-		color: "#1e1e2a",
-	},
-	playIcon: {
-		position: "absolute",
-		bottom: 35,
-		left: 10,
-		backgroundColor: "#33333377",
-		borderRadius: 10,
-		padding: 7,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	playButton: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
-		backgroundColor: "#3d3d4e",
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	timeText: {
+	text: {
 		color: "white",
-		fontSize: 16,
+		textAlign: "center",
+		marginBottom: 20,
+	},
+	title: {
+		color: "white",
+		textAlign: "center",
+		marginBottom: 40,
+		fontSize: 24,
 	},
 })

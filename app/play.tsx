@@ -161,7 +161,7 @@ const Play = () => {
 		<View style={styles.playerContainer}>
 			<LinearGradient colors={["#29214e", "#29214f"]} style={styles.playerGradient}>
 				<View style={styles.playerHeader}>
-					<Link href="./" asChild>
+					<Link href="/home" asChild>
 						<TouchableOpacity
 							style={styles.backButton}
 							onPress={() => {

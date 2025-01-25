@@ -5,9 +5,12 @@ export default function HomeLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
+				gestureEnabled: false,
 			}}
+			initialRouteName="index"
 		>
 			<Stack.Screen name="index" />
+			<Stack.Screen name="home" />
 			<Stack.Screen name="play" />
 		</Stack>
 	)
