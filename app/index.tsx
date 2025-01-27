@@ -1,23 +1,25 @@
 import { router } from "expo-router"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { TextInput, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native"
 import { useLiveQuery } from "drizzle-orm/expo-sqlite"
 import { db } from "@/database"
 import * as schema from "@/database/schema"
+import * as SplashScreen from "expo-splash-screen"
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync()
+
+// Set the animation options. This is optional.
+SplashScreen.setOptions({
+	duration: 500,
+	fade: true,
+})
 
 const App = () => {
+	const [appIsReady, setAppIsReady] = useState(false)
 	const [nameValue, setNameValue] = useState("")
 	const { data } = useLiveQuery(db.select().from(schema.user)) as { data: schema.user[] }
 	console.log(data)
-
-	const handleNext = () => {
-		if (nameValue.length === 0) {
-			Alert.alert("Please enter your name to get started")
-			return
-		}
-		db.insert(schema.user).values({ name: nameValue }).run()
-		router.replace("/home")
-	}
 
 	useEffect(() => {
 		if (data.length > 0) {
@@ -25,8 +27,48 @@ const App = () => {
 		}
 	})
 
+	useEffect(() => {
+		async function prepare() {
+			try {
+				// Pre-load fonts, make any API calls you need to do here
+				// await Font.loadAsync(Entypo.font)
+			} catch (e) {
+				console.warn(e)
+			} finally {
+				// Tell the application to render
+				setAppIsReady(true)
+			}
+		}
+
+		prepare()
+	}, [])
+
+	const onLayoutRootView = useCallback(() => {
+		if (appIsReady) {
+			// This tells the splash screen to hide immediately! If we call this after
+			// `setAppIsReady`, then we may see a blank screen while the app is
+			// loading its initial state and rendering its first pixels. So instead,
+			// we hide the splash screen once we know the root view has already
+			// performed layout.
+			SplashScreen.hide()
+		}
+	}, [appIsReady])
+
+	if (!appIsReady) {
+		return null
+	}
+
+	const handleNext = async () => {
+		if (nameValue.length === 0) {
+			Alert.alert("Please enter your name to get started")
+			return
+		}
+		await db.insert(schema.user).values({ name: nameValue })
+		router.replace("/home")
+	}
+
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} onLayout={onLayoutRootView}>
 			<Text style={styles.text}>Welcome to </Text>
 			<Text style={styles.title}>SoundNest</Text>
 			<Text style={styles.text}>Get Started by Entering Your Name</Text>
