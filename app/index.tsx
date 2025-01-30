@@ -1,5 +1,5 @@
 import { router } from "expo-router"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react"
 import { TextInput, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native"
 import { useLiveQuery } from "drizzle-orm/expo-sqlite"
 import { db } from "@/database"
@@ -16,51 +16,20 @@ SplashScreen.setOptions({
 })
 
 const App = () => {
-	const [appIsReady, setAppIsReady] = useState(false)
 	const [nameValue, setNameValue] = useState("")
-	const { data } = useLiveQuery(db.select().from(schema.user)) as { data: schema.user[] }
-	console.log(data)
+	const inputRef = useRef<TextInput>(null)
+	const { data } = useLiveQuery(db.select().from(schema.user))
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (data.length > 0) {
 			return router.replace("/home")
 		}
 	})
 
-	useEffect(() => {
-		async function prepare() {
-			try {
-				// Pre-load fonts, make any API calls you need to do here
-				// await Font.loadAsync(Entypo.font)
-			} catch (e) {
-				console.warn(e)
-			} finally {
-				// Tell the application to render
-				setAppIsReady(true)
-			}
-		}
-
-		prepare()
-	}, [])
-
-	const onLayoutRootView = useCallback(() => {
-		if (appIsReady) {
-			// This tells the splash screen to hide immediately! If we call this after
-			// `setAppIsReady`, then we may see a blank screen while the app is
-			// loading its initial state and rendering its first pixels. So instead,
-			// we hide the splash screen once we know the root view has already
-			// performed layout.
-			SplashScreen.hide()
-		}
-	}, [appIsReady])
-
-	if (!appIsReady) {
-		return null
-	}
-
 	const handleNext = async () => {
 		if (nameValue.length === 0) {
 			Alert.alert("Please enter your name to get started")
+			inputRef.current && inputRef.current.focus()
 			return
 		}
 		await db.insert(schema.user).values({ name: nameValue })
@@ -68,7 +37,7 @@ const App = () => {
 	}
 
 	return (
-		<View style={styles.container} onLayout={onLayoutRootView}>
+		<View style={styles.container}>
 			<Text style={styles.text}>Welcome to </Text>
 			<Text style={styles.title}>SoundNest</Text>
 			<Text style={styles.text}>Get Started by Entering Your Name</Text>
@@ -78,9 +47,10 @@ const App = () => {
 				value={nameValue}
 				onChangeText={setNameValue}
 				placeholderTextColor={"#fff"}
+				ref={inputRef}
 			/>
 			<TouchableOpacity style={styles.button} onPress={() => handleNext()}>
-				<Text style={styles.buttonText}>Next</Text>
+				<Text style={styles.buttonText}>Start Listening</Text>
 			</TouchableOpacity>
 		</View>
 	)
@@ -95,6 +65,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		width: "80%",
 		borderRadius: 15,
+		marginTop: 50,
 	},
 	buttonText: {
 		textAlign: "center",
@@ -114,6 +85,7 @@ const styles = StyleSheet.create({
 		borderColor: "#fff",
 		color: "#fff",
 		borderRadius: 15,
+		width: "100%",
 	},
 	text: {
 		color: "white",

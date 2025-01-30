@@ -12,6 +12,10 @@ interface SoundFile {
 	label: string
 	source: any // Use require('./path/to/sound.mp3')
 	image: any // Use require('./path/to/image.jpg')
+	sizes: {
+		width: number
+		height: number
+	}
 }
 
 interface SoundMap {
@@ -30,54 +34,90 @@ const Play = () => {
 			label: "Waves",
 			source: require("../assets/sounds/waves.mp3"),
 			image: require("../assets/lottie/waves.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum2",
 			label: "Rain",
 			source: require("../assets/sounds/rain.mp3"),
 			image: require("../assets/lottie/rain.json"),
+			sizes: {
+				width: 400,
+				height: 400,
+			},
 		},
 		{
 			id: "drum3",
 			label: "White",
 			source: require("../assets/sounds/white.mp3"),
 			image: require("../assets/lottie/white.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum4",
 			label: "Blue",
 			source: require("../assets/sounds/blue.mp3"),
 			image: require("../assets/lottie/blue.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum5",
 			label: "Brown",
 			source: require("../assets/sounds/brown.mp3"),
 			image: require("../assets/lottie/brown.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum6",
 			label: "Pink",
 			source: require("../assets/sounds/pink.mp3"),
 			image: require("../assets/lottie/pink.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum7",
 			label: "Fire",
 			source: require("../assets/sounds/fire.mp3"),
 			image: require("../assets/lottie/fire.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum8",
 			label: "Crickets",
 			source: require("../assets/sounds/crickets.mp3"),
 			image: require("../assets/lottie/crickets.json"),
+			sizes: {
+				width: 500,
+				height: 500,
+			},
 		},
 		{
 			id: "drum9",
 			label: "Birds",
 			source: require("../assets/sounds/birds.mp3"),
 			image: require("../assets/lottie/birds.json"),
+			sizes: {
+				width: 1200,
+				height: 1200,
+			},
 		},
 	]
 
@@ -175,12 +215,7 @@ const Play = () => {
 
 				<View style={styles.playerImageContainer}>
 					{soundObject?.image && (
-						<LottieView
-							source={soundObject.image}
-							style={{ width: 1000, height: 1000 }}
-							autoPlay
-							loop
-						/>
+						<LottieView source={soundObject.image} style={soundObject.sizes} autoPlay loop />
 					)}
 				</View>
 

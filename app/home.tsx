@@ -11,6 +11,10 @@ import {
 import { Ionicons } from "@expo/vector-icons"
 import { Link } from "expo-router"
 import LottieView from "lottie-react-native"
+import { useLiveQuery } from "drizzle-orm/expo-sqlite"
+import { db } from "@/database"
+import * as schema from "@/database/schema"
+import { eq } from "drizzle-orm"
 
 const catalog = [
 	{ title: "Blue", category: "ambient", path: require("../assets/lottie/blue.json") },
@@ -44,12 +48,19 @@ const CategoryCard = ({
 	</TouchableOpacity>
 )
 
-const SoundCard = ({ title, image }: { title: string; image: any }) => {
+const SoundCard = ({ title, image, index }: { title: string; image: any; index: number }) => {
+	const { data } = useLiveQuery(db.select().from(schema.user))
+	const { name } = data[0] || {}
 	return (
 		<Link href={`/play?sound=${title}`} asChild>
-			<TouchableOpacity style={styles.soundCard}>
+			<TouchableOpacity
+				style={styles.soundCard}
+				onPress={async () => {
+					await db.update(schema.user).set({ recent: index }).where(eq(schema.user.name, name))
+				}}
+			>
 				<View style={[styles.soundImage, { backgroundColor: "black" }]}>
-					<LottieView source={image} style={{ height: 150, width: 150 }} autoPlay speed={0.5} />
+					<LottieView source={image} style={{ height: 150, width: 150 }} autoPlay />
 				</View>
 				<Text style={styles.soundTitle}>{title}</Text>
 				<View style={styles.playIcon}>
@@ -62,6 +73,8 @@ const SoundCard = ({ title, image }: { title: string; image: any }) => {
 
 export default function App() {
 	const [category, setCategory] = useState("all")
+	const { data } = useLiveQuery(db.select().from(schema.user))
+	const { name, recent } = data[0] || {}
 
 	const displayGreeting = () => {
 		const myDate = new Date()
@@ -80,17 +93,23 @@ export default function App() {
 			<ScrollView style={styles.scrollView}>
 				<View style={styles.header}>
 					<View style={styles.headerTop}>
-						<Text style={styles.greeting}>Hey, Mike</Text>
+						<Text style={styles.greeting}>Hey, {name}</Text>
 					</View>
 					<Text style={styles.subGreeting}>{displayGreeting()}</Text>
 				</View>
 
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Recently Played</Text>
-					<View style={styles.recentlyPlayed}>
-						<SoundCard title="Bonfire" image={require("../assets/lottie/fire.json")} />
+				{recent && (
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Recently Played</Text>
+						<View style={styles.recentlyPlayed}>
+							<SoundCard
+								title={catalog[recent].title}
+								image={catalog[recent].path}
+								index={recent}
+							/>
+						</View>
 					</View>
-				</View>
+				)}
 
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Categories</Text>
@@ -132,7 +151,14 @@ export default function App() {
 					>
 						{catalog.reduce((data: React.ReactNode[], item) => {
 							if (category.toLowerCase() === "all" || item.category === category.toLowerCase()) {
-								data.push(<SoundCard key={item.title} title={item.title} image={item.path} />)
+								data.push(
+									<SoundCard
+										key={item.title}
+										title={item.title}
+										image={item.path}
+										index={catalog.findIndex((catalogItem) => catalogItem.title === item.title)}
+									/>,
+								)
 							}
 							return data
 						}, [])}
