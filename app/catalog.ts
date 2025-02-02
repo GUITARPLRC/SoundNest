@@ -8,14 +8,18 @@ export const catalog: {
 	sizes: {
 		width: number
 		height: number
+		miniWidth: number
+		miniHeight: number
 	}
 }[] = [
 	{
 		title: "Blue",
 		category: "ambient",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 125,
+			miniHeight: 125,
 		},
 		sound: require("../assets/sounds/blue.mp3"),
 		lottie: require("../assets/lottie/blue.json"),
@@ -24,8 +28,10 @@ export const catalog: {
 		title: "Brown",
 		category: "ambient",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 125,
+			miniHeight: 125,
 		},
 		sound: require("../assets/sounds/brown.mp3"),
 		lottie: require("../assets/lottie/brown.json"),
@@ -34,8 +40,10 @@ export const catalog: {
 		title: "Pink",
 		category: "ambient",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 125,
+			miniHeight: 125,
 		},
 		sound: require("../assets/sounds/pink.mp3"),
 		lottie: require("../assets/lottie/pink.json"),
@@ -44,8 +52,10 @@ export const catalog: {
 		title: "White",
 		category: "ambient",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 125,
+			miniHeight: 125,
 		},
 		sound: require("../assets/sounds/white.mp3"),
 		lottie: require("../assets/lottie/white.json"),
@@ -54,8 +64,10 @@ export const catalog: {
 		title: "Waves",
 		category: "beach",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 150,
+			miniHeight: 150,
 		},
 		sound: require("../assets/sounds/waves.mp3"),
 		lottie: require("../assets/lottie/waves.json"),
@@ -64,18 +76,22 @@ export const catalog: {
 		title: "Crickets",
 		category: "sunset",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 400,
+			height: 400,
+			miniWidth: 150,
+			miniHeight: 150,
 		},
 		sound: require("../assets/sounds/crickets.mp3"),
 		lottie: require("../assets/lottie/crickets.json"),
 	},
 	{
-		title: "Bonfire",
+		title: "Fire",
 		category: "sunset",
 		sizes: {
-			width: 500,
-			height: 500,
+			width: 600,
+			height: 600,
+			miniWidth: 150,
+			miniHeight: 150,
 		},
 		sound: require("../assets/sounds/fire.mp3"),
 		lottie: require("../assets/lottie/fire.json"),
@@ -86,6 +102,8 @@ export const catalog: {
 		sizes: {
 			width: 400,
 			height: 400,
+			miniWidth: 100,
+			miniHeight: 100,
 		},
 		sound: require("../assets/sounds/rain.mp3"),
 		lottie: require("../assets/lottie/rain.json"),
@@ -96,6 +114,8 @@ export const catalog: {
 		sizes: {
 			width: 1200,
 			height: 1200,
+			miniWidth: 500,
+			miniHeight: 500,
 		},
 		sound: require("../assets/sounds/birds.mp3"),
 		lottie: require("../assets/lottie/birds.json"),

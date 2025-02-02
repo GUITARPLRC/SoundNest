@@ -37,7 +37,19 @@ const CategoryCard = ({
 	</TouchableOpacity>
 )
 
-const SoundCard = ({ title, image, index }: { title: string; image: any; index: number }) => {
+const SoundCard = ({
+	title,
+	image,
+	index,
+	miniWidth,
+	miniHeight,
+}: {
+	title: string
+	image: any
+	index: number
+	miniWidth: number
+	miniHeight: number
+}) => {
 	const { data } = useLiveQuery(db.select().from(schema.user))
 	const { name } = data[0] || {}
 	return (
@@ -49,7 +61,7 @@ const SoundCard = ({ title, image, index }: { title: string; image: any; index: 
 				}}
 			>
 				<View style={[styles.soundImage, { backgroundColor: "black" }]}>
-					<LottieView source={image} style={{ height: 150, width: 150 }} autoPlay />
+					<LottieView source={image} style={{ height: miniHeight, width: miniWidth }} autoPlay />
 				</View>
 				<Text style={styles.soundTitle}>{title}</Text>
 				<View style={styles.playIcon}>
@@ -95,6 +107,7 @@ export default function App() {
 								title={catalog[recent].title}
 								image={catalog[recent].lottie}
 								index={recent}
+								{...catalog[recent].sizes}
 							/>
 						</View>
 					</View>
@@ -146,6 +159,7 @@ export default function App() {
 										title={item.title}
 										image={item.lottie}
 										index={catalog.findIndex((catalogItem) => catalogItem.title === item.title)}
+										{...item.sizes}
 									/>,
 								)
 							}
@@ -206,6 +220,8 @@ const styles = StyleSheet.create({
 		height: 150,
 		borderRadius: 25,
 		overflow: "hidden",
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	soundTitle: {
 		color: "white",
