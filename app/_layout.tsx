@@ -1,5 +1,4 @@
-import React from "react"
-import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native"
+import React from "react"å
 import { useFonts } from "expo-font"
 import { Stack } from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
@@ -7,7 +6,7 @@ import { useEffect } from "react"
 import "react-native-reanimated"
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin"
 
-import { SQLiteProvider } from "../providers/sqlite.provider.tsx"
+import { SQLiteProvider } from "../providers/sqlite.provider"
 import { expoDb } from "../database"
 
 import { View } from "react-native"
@@ -20,7 +19,6 @@ export default function RootLayout() {
 		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
 	})
 
-	// TODO: fix this, how to use
 	const DrizzleStudio = () => {
 		useDrizzleStudio(expoDb)
 		return <View></View>

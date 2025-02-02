@@ -1,5 +1,5 @@
 import { router } from "expo-router"
-import React, { useEffect, useState, useRef, useLayoutEffect } from "react"
+import React, { useState, useRef, useLayoutEffect } from "react"
 import { TextInput, TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native"
 import { useLiveQuery } from "drizzle-orm/expo-sqlite"
 import { db } from "@/database"

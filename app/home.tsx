@@ -15,18 +15,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite"
 import { db } from "@/database"
 import * as schema from "@/database/schema"
 import { eq } from "drizzle-orm"
-
-const catalog = [
-	{ title: "Blue", category: "ambient", path: require("../assets/lottie/blue.json") },
-	{ title: "Brown", category: "ambient", path: require("../assets/lottie/brown.json") },
-	{ title: "Pink", category: "ambient", path: require("../assets/lottie/pink.json") },
-	{ title: "White", category: "ambient", path: require("../assets/lottie/white.json") },
-	{ title: "Waves", category: "beach", path: require("../assets/lottie/waves.json") },
-	{ title: "Crickets", category: "sunset", path: require("../assets/lottie/crickets.json") },
-	{ title: "Bonfire", category: "sunset", path: require("../assets/lottie/fire.json") },
-	{ title: "Rain", category: "forest", path: require("../assets/lottie/rain.json") },
-	{ title: "Birds", category: "forest", path: require("../assets/lottie/birds.json") },
-]
+import { catalog } from "./catalog"
 
 const CategoryCard = ({
 	icon,
@@ -104,7 +93,7 @@ export default function App() {
 						<View style={styles.recentlyPlayed}>
 							<SoundCard
 								title={catalog[recent].title}
-								image={catalog[recent].path}
+								image={catalog[recent].lottie}
 								index={recent}
 							/>
 						</View>
@@ -155,7 +144,7 @@ export default function App() {
 									<SoundCard
 										key={item.title}
 										title={item.title}
-										image={item.path}
+										image={item.lottie}
 										index={catalog.findIndex((catalogItem) => catalogItem.title === item.title)}
 									/>,
 								)

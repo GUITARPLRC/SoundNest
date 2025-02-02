@@ -6,17 +6,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { Link, useGlobalSearchParams } from "expo-router"
 import Slider from "@react-native-community/slider"
 import LottieView from "lottie-react-native"
-
-interface SoundFile {
-	id: string
-	label: string
-	source: any // Use require('./path/to/sound.mp3')
-	image: any // Use require('./path/to/image.jpg')
-	sizes: {
-		width: number
-		height: number
-	}
-}
+import { catalog } from "./catalog"
 
 interface SoundMap {
 	[key: string]: Audio.Sound
@@ -27,99 +17,6 @@ const Play = () => {
 	const [sounds, setSounds] = useState<SoundMap>({})
 	const [isPlaying, setIsPlaying] = useState(true)
 	const [volume, setVolume] = useState(0.5)
-
-	const soundFiles: SoundFile[] = [
-		{
-			id: "drum1",
-			label: "Waves",
-			source: require("../assets/sounds/waves.mp3"),
-			image: require("../assets/lottie/waves.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum2",
-			label: "Rain",
-			source: require("../assets/sounds/rain.mp3"),
-			image: require("../assets/lottie/rain.json"),
-			sizes: {
-				width: 400,
-				height: 400,
-			},
-		},
-		{
-			id: "drum3",
-			label: "White",
-			source: require("../assets/sounds/white.mp3"),
-			image: require("../assets/lottie/white.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum4",
-			label: "Blue",
-			source: require("../assets/sounds/blue.mp3"),
-			image: require("../assets/lottie/blue.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum5",
-			label: "Brown",
-			source: require("../assets/sounds/brown.mp3"),
-			image: require("../assets/lottie/brown.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum6",
-			label: "Pink",
-			source: require("../assets/sounds/pink.mp3"),
-			image: require("../assets/lottie/pink.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum7",
-			label: "Fire",
-			source: require("../assets/sounds/fire.mp3"),
-			image: require("../assets/lottie/fire.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum8",
-			label: "Crickets",
-			source: require("../assets/sounds/crickets.mp3"),
-			image: require("../assets/lottie/crickets.json"),
-			sizes: {
-				width: 500,
-				height: 500,
-			},
-		},
-		{
-			id: "drum9",
-			label: "Birds",
-			source: require("../assets/sounds/birds.mp3"),
-			image: require("../assets/lottie/birds.json"),
-			sizes: {
-				width: 1200,
-				height: 1200,
-			},
-		},
-	]
 
 	useEffect(() => {
 		setupAudio()
@@ -148,21 +45,21 @@ const Play = () => {
 		const newSounds: SoundMap = {}
 
 		try {
-			const { sound } = await Audio.Sound.createAsync(soundObject!.source, {
+			const { sound } = await Audio.Sound.createAsync(soundObject!.sound, {
 				shouldPlay: false,
 				volume: 1.0,
 				isLooping: true,
 			})
-			newSounds[soundObject!.id] = sound
+			newSounds[soundObject!.title] = sound
 		} catch (error) {
-			console.error(`Error loading sound ${soundObject!.id}:`, error)
+			console.error(`Error loading sound ${soundObject!.title}:`, error)
 		}
 
 		setSounds(newSounds)
 	}
 
 	useEffect(() => {
-		const object = sounds[soundObject!.id]
+		const object = sounds[soundObject!.title]
 		if (object) {
 			object.playAsync()
 			object.setVolumeAsync(volume)
@@ -188,13 +85,13 @@ const Play = () => {
 	}
 
 	useEffect(() => {
-		if (sounds[soundObject!.id]) {
-			sounds[soundObject!.id].setVolumeAsync(volume)
+		if (sounds[soundObject!.title]) {
+			sounds[soundObject!.title].setVolumeAsync(volume)
 		}
 	}, [volume, sounds])
 
 	const soundItem = sound === "Bonfire" ? "Fire" : sound
-	const soundObject = soundFiles.find((item) => item.label === soundItem)
+	const soundObject = catalog.find((item) => item.title === soundItem)
 
 	return (
 		<View style={styles.playerContainer}>
@@ -210,12 +107,12 @@ const Play = () => {
 							<Ionicons name="chevron-back" size={24} color="white" />
 						</TouchableOpacity>
 					</Link>
-					<Text style={styles.playerTitle}>{soundObject?.label}</Text>
+					<Text style={styles.playerTitle}>{soundObject?.title}</Text>
 				</View>
 
 				<View style={styles.playerImageContainer}>
-					{soundObject?.image && (
-						<LottieView source={soundObject.image} style={soundObject.sizes} autoPlay loop />
+					{soundObject?.lottie && (
+						<LottieView source={soundObject.lottie} style={soundObject.sizes} autoPlay loop />
 					)}
 				</View>
 
