@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	SafeAreaView,
 	StatusBar,
+	Pressable,
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { Link } from "expo-router"
@@ -16,6 +17,9 @@ import { db } from "@/database"
 import * as schema from "@/database/schema"
 import { eq } from "drizzle-orm"
 import { catalog } from "./catalog"
+import Animated, { LinearTransition, SlideInRight, SlideOutRight } from "react-native-reanimated"
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const CategoryCard = ({
 	icon,
@@ -30,7 +34,7 @@ const CategoryCard = ({
 }) => (
 	<TouchableOpacity
 		style={[styles.categoryCard, { backgroundColor }]}
-		onPress={() => setCategory(title)}
+		onPress={() => setCategory(title.toLowerCase())}
 	>
 		<Text style={styles.categoryIcon}>{icon}</Text>
 		<Text style={styles.categoryTitle}>{title}</Text>
@@ -54,7 +58,10 @@ const SoundCard = ({
 	const { name } = data[0] || {}
 	return (
 		<Link href={`/play?sound=${title}`} asChild>
-			<TouchableOpacity
+			<AnimatedPressable
+				entering={SlideInRight.springify().damping(14)}
+				exiting={SlideOutRight.springify().damping(14)}
+				layout={LinearTransition}
 				style={styles.soundCard}
 				onPress={async () => {
 					await db.update(schema.user).set({ recent: index }).where(eq(schema.user.name, name))
@@ -67,7 +74,7 @@ const SoundCard = ({
 				<View style={styles.playIcon}>
 					<Ionicons name="play" size={15} color="white" />
 				</View>
-			</TouchableOpacity>
+			</AnimatedPressable>
 		</Link>
 	)
 }
@@ -152,7 +159,7 @@ export default function App() {
 						style={{ paddingTop: 2, paddingLeft: 15 }}
 					>
 						{catalog.reduce((data: React.ReactNode[], item) => {
-							if (category.toLowerCase() === "all" || item.category === category.toLowerCase()) {
+							if (category === "all" || item.category === category) {
 								data.push(
 									<SoundCard
 										key={item.title}
