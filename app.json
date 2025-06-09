@@ -1,40 +1,44 @@
 {
-	"expo": {
-		"name": "SoundNest",
-		"slug": "SoundNest",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/images/icon.png",
-		"scheme": "myapp",
-		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "soundNest"
-		},
-		"android": {
-			"permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"],
-			"package": "com.soundNest"
-		},
-		"plugins": [
-			"expo-router",
-			[
-				"expo-splash-screen",
-				{
-					"backgroundColor": "#29214e",
-					"image": "./assets/splash-icon.png",
-					"imageWidth": 250
-				}
-			],
-			"expo-sqlite"
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"eas": {
-				"projectId": "ab04f4af-8a7b-4e3e-aa74-865d1e56743a"
-			}
-		}
-	}
+  "expo": {
+    "name": "SoundNest",
+    "slug": "SoundNest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "soundNest",
+      "appleTeamId": "TG7D8759C5",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"],
+      "package": "com.soundNest"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#29214e",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 250
+        }
+      ],
+      "expo-sqlite"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ab04f4af-8a7b-4e3e-aa74-865d1e56743a"
+      }
+    }
+  }
 }
